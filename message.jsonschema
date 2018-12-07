@@ -61,6 +61,11 @@
             "description": "Optional Agave URN defining the job's archive path",
             "$ref": "agave_files_uri.json"
         },
+        "instanced": {
+            "description": "Whether the generated archive path should be instanced with a randomized session",
+            "type": "boolean",
+            "value": true
+        },
         "data": {
             "description": "Optional dict-like object describing the job's run-time parameterization",
             "type": "object"

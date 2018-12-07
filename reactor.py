@@ -1,10 +1,10 @@
 import json
+import sys
 from attrdict import AttrDict
 from requests.exceptions import HTTPError
 
 from reactors.runtime import Reactor, agaveutils
 from datacatalog.managers.pipelinejobs import Manager, ManagedPipelineJob
-
 
 def main():
     rx = Reactor()
@@ -28,8 +28,11 @@ def main():
 
     # Verify appId is known to Agave apps API. Requires the invoking
     # user has a tenant admin role unless the appId is public
-    agave_appid = mes.get('appId')
+    agave_job = mes.get('job_definition')
+    agave_appid = agave_job.get('appId')
     agave_app_details = None
+    job_params = mes.get('parameters')
+    instanced_archive_path = mes.get('instanced', True)
     try:
         agave_app_details = rx.client.apps.get(appId=agave_appid)
     except HTTPError as http_err:
@@ -47,10 +50,9 @@ def main():
     pipeline_uuid = None
     try:
         manager_stores = Manager.init_stores(mongodb_conn)
-        pipeline_rec = manager_stores['pipeline'].find_one_by_id(
-            {'id': agave_appid})
+        pipeline_rec = manager_stores['pipeline'].find_one_by_id(id=agave_appid)
         if pipeline_rec is None:
-            raise ValueError('{} is not a known Pipeline identifier')
+            raise ValueError('No database record returned')
         else:
             pipeline_uuid = pipeline_rec.get('uuid')
     except Exception as generic_exception:
@@ -96,14 +98,19 @@ def main():
                                  pipeline_uuid=pipeline_uuid,
                                  data=mes.get('data', {}),
                                  session=rx.nickname,
-                                 agent=rx.id,
+                                 agent=rx.uid,
                                  task=rx.execid,
+                                 instanced=instanced_archive_path,
+                                 **job_params
                                  )
-        job.setup()
-        job_uuid = job['uuid']
+        job.setup(data=agave_job)
+        job_uuid = job.uuid
     except Exception as generic_exception:
-        cancel_job(message='Failed to set up ManagedPipelineJob',
-                   exception=generic_exception)
+        if job is not None:
+            cancel_job(message='Failed to set up ManagedPipelineJob',
+                       exception=generic_exception)
+        else:
+            rx.on_failure('Failed to set up ManagedPipelineJob', generic_exception)
 
     # Extend the incoming Agave job definition to update the PipelineJob.
     # Set the archivePath and archiveSystem from the ManagedPipelineJob
@@ -112,9 +119,7 @@ def main():
     # the job's 'callback' property, which was initialized on job.setup(). Any
     # pre-existing notifications (email, other callbacks) are preserved.
 
-    agave_job = None
     try:
-        agave_job = mes.get('job_definition')
         if 'notifications' not in agave_job:
             agave_job['notifications'] = list()
         for event in ('RUNNING', 'FINISHED', 'FAILED'):
@@ -131,6 +136,10 @@ def main():
         cancel_job(
             message='Failed to prepare Agave job definition',
             exception=generic_exception)
+
+    if rx.local:
+        print(json.dumps(agave_job, indent=4))
+        sys.exit(0)
 
     # Launch the Agave job
     agave_job_id = None

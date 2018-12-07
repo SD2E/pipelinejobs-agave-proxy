@@ -5,16 +5,11 @@ import yaml
 import semver
 import json
 from jsonschema import validate, ValidationError
+from fixtures import credentials, agave
 
 CWD = os.getcwd()
 HERE = os.path.dirname(os.path.abspath(__file__))
 PARENT = os.path.dirname(HERE)
-
-sys.path.insert(0, PARENT)
-sys.path.insert(0, HERE)
-sys.path.insert(0, '/')
-from fixtures import credentials, agave
-
 
 def test_imports_reactor_py():
     """File reactor.py can be imported

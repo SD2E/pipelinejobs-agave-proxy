@@ -1,6 +1,6 @@
 CONTAINER_IMAGE=$(shell bash scripts/container_image.sh)
 PYTHON ?= "python3"
-PYTEST_OPTS ?= "-s -vvv"
+PYTEST_OPTS ?= "-s"
 PYTEST_DIR ?= "tests"
 ABACO_DEPLOY_OPTS ?= "-p"
 SCRIPT_DIR ?= "scripts"
