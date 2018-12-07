@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://schema.catalog.sd2e.org/schemas/agave_pipelinejob.json",
+    "title": "AgavePipelineJob",
+    "description": "Launch an Agave job as a PipelineJob",
+    "type": "object",
+    "definitions": {
+        "datacatalog_field": {
+            "type": "object",
+            "anyOf": [
+                {
+                    "required": [
+                        "sample_id"
+                    ]
+                },
+                {
+                    "required": [
+                        "experiment_design_id"
+                    ]
+                },
+                {
+                    "required": [
+                        "experiment_id"
+                    ]
+                },
+                {
+                    "required": [
+                        "measurement_id"
+                    ]
+                }
+            ],
+            "properties": {
+                "sample_id": {
+                    "type": "string",
+                    "pattern": "^sample.(uw_biofab|transcriptic|ginkgo|emerald)."
+                },
+                "experiment_design_id": {
+                    "type": "string",
+                    "$ref": "experiment_reference.json"
+                },
+                "experiment_id": {
+                    "type": "string",
+                    "pattern": "^experiment.(uw_biofab|transcriptic|ginkgo|emerald)."
+                },
+                "measurement_id": {
+                    "type": "string",
+                    "pattern": "^measurement.(uw_biofab|transcriptic|ginkgo|emerald)."
+                }
+            }
+        }
+    },
+    "properties": {
+        "parameters": {
+            "$ref": "#/definitions/datacatalog_field"
+        },
+        "job_definition": {
+            "description": "An Agave API job definition",
+            "type": "object"
+        },
+        "archive_path": {
+            "description": "Optional Agave URN defining the job's archive path",
+            "$ref": "agave_files_uri.json"
+        },
+        "data": {
+            "description": "Optional dict-like object describing the job's run-time parameterization",
+            "type": "object"
+        }
+    },
+    "required": [
+        "job_definition",
+        "parameters"
+    ],
+    "additionalProperties": false
+}

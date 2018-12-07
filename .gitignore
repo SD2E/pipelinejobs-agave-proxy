@@ -1,0 +1,17 @@
+.vscode/
+
+tmp.*
+config.yml
+secrets.json
+service_account.json
+settings.py
+
+*.pyc
+__pycache__
+.pytest_cache/
+
+dist/
+*egg-info/
+build/
+docs/_build/
+
