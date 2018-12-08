@@ -1,5 +1,5 @@
 # Reactor mandatory settings
-REACTOR_NAME=pipelinejobs_agave_adapter
+REACTOR_NAME=pipelinejobs-agave-proxy:staging
 # REACTOR_DESCRIPTION=
 REACTOR_ALIAS=
 

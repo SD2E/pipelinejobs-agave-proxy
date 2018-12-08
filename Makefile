@@ -31,8 +31,7 @@ tests-local-message01:
 	bash $(SCRIPT_DIR)/run_container_message.sh tests/data/message01.json
 
 tests-deployed:
-	echo "Not implemented"
-	exit 1
+	bash $(SCRIPT_DIR)/run_abaco_message.sh tests/data/message01.json
 
 clean: clean-image clean-tests
 
@@ -46,5 +45,10 @@ deploy:
 	abaco deploy -t $(GITREF) $(ABACO_DEPLOY_OPTS) -U $(ACTOR_ID)
 
 postdeploy:
-	bash tests/run_after_deploy.sh
+	bash scripts/run_after_deploy.sh
 
+nonce:
+	bash scripts/nonces-new.sh
+
+nonces:
+	bash scripts/nonces-list.sh

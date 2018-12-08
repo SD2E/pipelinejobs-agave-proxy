@@ -139,7 +139,7 @@ def main():
 
     if rx.local:
         print(json.dumps(agave_job, indent=4))
-        sys.exit(0)
+        # sys.exit(0)
 
     # Launch the Agave job
     agave_job_id = None
@@ -165,8 +165,8 @@ def main():
     # the job asset. If this doesn't succeed, we don't fail the job since
     # the expensive part (the Agave job) has been submitted.
     try:
-        job_uri = job.__canonicalize_job(agave_job_id)
-        job.update(data={'job_link': job_uri})
+        job_uri = job.canonicalize_job(agave_job_id)
+        job.run(data={'job_link': job_uri})
     except Exception as job_update_exception:
         rx.logger.warning(
             'Unable to update status of job {} because {}'.format(

@@ -16,3 +16,5 @@ build/
 docs/_build/
 
 env/
+
+.ACTOR_*
