@@ -31,7 +31,7 @@ tests-local-message01:
 	bash $(SCRIPT_DIR)/run_container_message.sh tests/data/message01.json
 
 tests-deployed:
-	bash $(SCRIPT_DIR)/run_abaco_message.sh tests/data/message01.json
+	bash $(SCRIPT_DIR)/run_abaco_message.sh tests/data/message02.json
 
 clean: clean-image clean-tests
 

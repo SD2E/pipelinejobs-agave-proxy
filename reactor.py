@@ -33,6 +33,8 @@ def main():
     agave_app_details = None
     job_params = mes.get('parameters')
     instanced_archive_path = mes.get('instanced', True)
+    rx.logger.info(
+        'Received request manage execution of {}'.format(agave_appid))
     try:
         agave_app_details = rx.client.apps.get(appId=agave_appid)
     except HTTPError as http_err:
@@ -52,7 +54,7 @@ def main():
         manager_stores = Manager.init_stores(mongodb_conn)
         pipeline_rec = manager_stores['pipeline'].find_one_by_id(id=agave_appid)
         if pipeline_rec is None:
-            raise ValueError('No database record returned')
+            raise ValueError("No 'pipelines' record found in database")
         else:
             pipeline_uuid = pipeline_rec.get('uuid')
     except Exception as generic_exception:
@@ -139,7 +141,6 @@ def main():
 
     if rx.local:
         print(json.dumps(agave_job, indent=4))
-        # sys.exit(0)
 
     # Launch the Agave job
     agave_job_id = None
@@ -173,7 +174,7 @@ def main():
                 job_uuid, job_update_exception))
 
     # If no other exit state has been encountered, report success
-    rx.on_success('PipelineJob {} is managing Agave job {} ({} usec)'.format(
+    rx.on_success('ManagedPipelineJob {} is managing Agave job {} ({} usec)'.format(
         job_uuid, agave_job_id, rx.elapsed()))
 
 
