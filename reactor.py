@@ -34,7 +34,7 @@ def main():
     job_params = mes.get('parameters')
     instanced_archive_path = mes.get('instanced', True)
     rx.logger.info(
-        'Received request manage execution of {}'.format(agave_appid))
+        'Received request to manage execution of {}'.format(agave_appid))
     try:
         agave_app_details = rx.client.apps.get(appId=agave_appid)
     except HTTPError as http_err:
@@ -124,10 +124,11 @@ def main():
     try:
         if 'notifications' not in agave_job:
             agave_job['notifications'] = list()
-        for event in ('RUNNING', 'FINISHED', 'FAILED'):
-            notification = {'event': event,
+        # for event in ('SUBMITTING', 'STAGING_JOB', 'RUNNING', 'ARCHIVING', 'ARCHIVING_FINIS', 'FINISHED', 'FAILED'):
+            # Capture all Agave job states
+            notification = {'event': '*',
                             'persistent': True,
-                            'url': job.callback + '&status=${STATUS}'}
+                            'url': job.callback + '&status=${STATUS}&note=${JOB_ERROR}'}
             agave_job['notifications'].append(notification)
 
         agave_job['archiveSystem'] = job.archive_system
@@ -141,6 +142,7 @@ def main():
 
     if rx.local:
         print(json.dumps(agave_job, indent=4))
+        sys.exit(0)
 
     # Launch the Agave job
     agave_job_id = None

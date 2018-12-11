@@ -8,6 +8,7 @@ PREF_SHELL ?= "bash"
 ACTOR_ID ?=
 NOCLEANUP ?= 0
 GITREF=$(shell git rev-parse --short HEAD)
+MESSAGEFILE ?=
 
 .PHONY: tests container tests-local tests-reactor tests-deployed
 .SILENT: tests container tests-local tests-reactor tests-deployed shell
@@ -32,6 +33,9 @@ tests-local-message01:
 
 tests-deployed:
 	bash $(SCRIPT_DIR)/run_abaco_message.sh tests/data/message02.json
+
+tests-deployed-message:
+	bash $(SCRIPT_DIR)/run_abaco_message.sh tests/data/$(MESSAGEFILE)
 
 clean: clean-image clean-tests
 

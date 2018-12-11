@@ -11,11 +11,11 @@ Prequisites
 
 Some external dependencies must be satisfied before jobs can be run:
 
-# The Agave app itself must be architected to fit the PipelineJobs workflow
-# The Agave-based application must be registered as a Data Catalog ``Pipeline``,
+1. The Agave app itself must be architected to fit the PipelineJobs workflow
+2. The Agave-based application must be registered as a Data Catalog ``Pipeline``,
 where the ``pipeline.id`` is identical to the Agave ``app.id``. The Agave app
 must either be **public** or shared with the administrative user **sd2eadm**.
-# The user who will request jobs needs special API key, which is different
+3. The user requesting jobs needs special API key, which is different
 from the TACC.cloud Oauth2 Bearer token that most users are accustomed to.
 
 Launching a Managed Job
@@ -88,8 +88,7 @@ being overrwritten. To avoid the instancing directory being appended, pass
 .. note:: The strictness of archivePath naming is needed to ensure that the job
     outputs can be indexed and registered with the Data Catalog.
 
-.. note:: The JSONschema for a **Pipeline Jobs
-Agave Proxy** job request is found in `message.jsonschema </message.jsonschema>`_.
+.. note:: The JSONschema for a **Pipeline Jobs Agave Proxy** job request is found in `message.jsonschema </message.jsonschema>`_.
 
 Example Agave Job Definition
 -----------------------------
