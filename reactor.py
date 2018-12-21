@@ -93,19 +93,30 @@ def main():
     # with a status of CREATED.
     job = None
     job_uuid = None
+
+    rx.logger.info('Building initial job.data')
+    init_data = agave_job
+    mes_data = mes.get('data', {})
+    for k, v in job_params.items():
+        if v is not None and isinstance(v, str):
+            init_data[k] = v
+    # init_data = {**init_data, **mes_data}
+
     try:
         job = ManagedPipelineJob(rx.settings.mongodb,
                                  rx.settings.pipelines.job_manager_id,
                                  rx.settings.pipelines.updates_nonce,
                                  pipeline_uuid=pipeline_uuid,
-                                 data=mes.get('data', {}),
+                                 data=init_data,
                                  session=rx.nickname,
                                  agent=rx.uid,
                                  task=rx.execid,
                                  instanced=instanced_archive_path,
                                  **job_params
                                  )
-        job.setup(data=agave_job)
+
+        job.setup(mes_data)
+
         job_uuid = job.uuid
     except Exception as generic_exception:
         if job is not None:
@@ -120,7 +131,7 @@ def main():
     # The former is accomplished by adding custom notifications built from
     # the job's 'callback' property, which was initialized on job.setup(). Any
     # pre-existing notifications (email, other callbacks) are preserved.
-    # TODO - Add callback to PipelineJobIndexer on FINISHED
+    # TODO - Add callback to PipelineJobIndexer on FINISHED?
     try:
         if 'notifications' not in agave_job:
             agave_job['notifications'] = list()
