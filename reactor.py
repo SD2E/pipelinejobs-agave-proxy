@@ -120,7 +120,7 @@ def main():
     # The former is accomplished by adding custom notifications built from
     # the job's 'callback' property, which was initialized on job.setup(). Any
     # pre-existing notifications (email, other callbacks) are preserved.
-
+    # TODO - Add callback to PipelineJobIndexer on FINISHED
     try:
         if 'notifications' not in agave_job:
             agave_job['notifications'] = list()

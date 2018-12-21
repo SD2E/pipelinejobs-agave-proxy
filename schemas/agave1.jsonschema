@@ -1,0 +1,94 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://schema.catalog.sd2e.org/schemas/agave_pipelinejob.json",
+    "title": "AgavePipelineJob",
+    "description": "Launch an Agave job as a PipelineJob",
+    "type": "object",
+    "definitions": {
+        "collection_level": {
+            "description": "Defines the level at which outputs should be aggregated when archived. The default, if not specified, is the 'measurement' that generated the job's inputs.",
+            "type": "string",
+            "value": "measurement",
+            "enum": [
+                "experiment_design",
+                "experiment",
+                "sample",
+                "measurement",
+                "file"
+            ]
+        },
+        "agave_job_inputs": {
+            "type": "object",
+            "patternProperties": {
+                "^.*$": {
+                    "anyOf": [
+                        {
+                            "ref": "agave_files_uri.json"
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
+                }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+        },
+        "agave_job_has_inputs": {
+            "type": "object",
+            "properties": {
+                "inputs": {
+                    "$ref": "#/definitions/agave_job_inputs"
+                },
+                "parameters": {
+                    "type": "object"
+                },
+                "appId": {
+                    "$ref": "agave_appid.json"
+                }
+            },
+            "required": [
+                "inputs",
+                "parameters",
+                "appId"
+            ]
+        }
+    },
+    "properties": {
+        "collection": {
+            "$ref": "#/definitions/collection_level"
+        },
+        "job_definition": {
+            "description": "An Agave API job definition",
+            "$ref": "#/definitions/agave_job_has_inputs"
+        },
+        "archive_path": {
+            "description": "Optional Agave URN defining the job's archive path",
+            "$ref": "agave_files_uri.json"
+        },
+        "instanced": {
+            "description": "Whether the generated archive path should be instanced with a randomized session",
+            "type": "boolean",
+            "value": true
+        },
+        "data": {
+            "description": "Optional dict-like object describing the job's run-time parameterization",
+            "type": "object"
+        },
+        "index_patterns": {
+            "type": "array",
+            "description": "List of Python regular expressions defining which output files to associate with the job. Omit entirely to avoid applying any filtering.",
+            "items": {
+                "type": "string"
+            }
+        },
+        "processing_level": {
+            "description": "Defaults to '1' if not provided",
+            "$ref": "processing_level.json"
+        }
+    },
+    "required": [
+        "job_definition"
+    ],
+    "additionalProperties": false
+}
