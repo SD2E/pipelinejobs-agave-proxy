@@ -112,7 +112,9 @@ def main():
                                  agent=rx.uid,
                                  task=rx.execid,
                                  instanced=instanced_archive_path,
-                                 **job_params
+                                 archive_path_patterns=mes.get(
+                                     'index_patterns', []),
+                                 ** job_params
                                  )
 
         job.setup(mes_data)
@@ -131,7 +133,6 @@ def main():
     # The former is accomplished by adding custom notifications built from
     # the job's 'callback' property, which was initialized on job.setup(). Any
     # pre-existing notifications (email, other callbacks) are preserved.
-    # TODO - Add callback to PipelineJobIndexer on FINISHED?
     try:
         if 'notifications' not in agave_job:
             agave_job['notifications'] = list()
@@ -140,6 +141,11 @@ def main():
             notification = {'event': '*',
                             'persistent': True,
                             'url': job.callback + '&status=${STATUS}&note=${JOB_ERROR}'}
+            agave_job['notifications'].append(notification)
+
+            notification = {'event': 'FINISHED',
+                            'persistent': False,
+                            'url': job.indexer_callback}
             agave_job['notifications'].append(notification)
 
         agave_job['archiveSystem'] = job.archive_system
