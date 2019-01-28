@@ -15,11 +15,6 @@
                 },
                 {
                     "required": [
-                        "experiment_design_id"
-                    ]
-                },
-                {
-                    "required": [
                         "experiment_id"
                     ]
                 },
